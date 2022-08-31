@@ -58,78 +58,96 @@ let btn2 = document.getElementById("btn2")
 let btn3 = document.getElementById("btn3")
 
 function consultarApi(){
-   fetch("https://the-trivia-api.com/api/questions")
+    fetch("https://the-trivia-api.com/api/questions")
         .then(response => response.json())
         .then(result => {
-            console.log(result)
+            console.log(result[0])
             arrayBotones = agregarPregunta(result)
-            adivinarPregunta (result, arrayBotones)
-            
-        })
+            console.log(arrayBotones)
+            adivinarPregunta (result, arrayBotones)})
         .catch(error => console.log(error))
     }
-
-//ALGORITMO FISHER-YATES
-function shuffle(arr) {
-    var i,
+    
+    //ALGORITMO FISHER-YATES
+    function shuffle(arr) {
+        var i,
         j,
         temp;
-    for (i = arr.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-    return arr;    
-};
-
+        for (i = arr.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;    
+    };
+    
     function sumarPuntos(lista){
-    sumar = lista.puntos++;
-    return sumar;
-}    
-
-function agregarPregunta(result){
-    let arrayPregunta = [
-        result[0].incorrectAnswers[0],
-        result[0].incorrectAnswers[1],
-        result[0].correctAnswer
-    ]
+        sumar = lista.puntos++;
+        return sumar;
+    }    
+    
+    function agregarPregunta(result){
+        let arrayPregunta = [
+            result[0].incorrectAnswers[0],
+            result[0].incorrectAnswers[1],
+            result[0].correctAnswer
+        ]
     shuffle(arrayPregunta)
     pregunta.innerText = result[0].question
     btn1.innerText = arrayPregunta[0]
     btn2.innerText = arrayPregunta[1]
     btn3.innerText = arrayPregunta[2]
     return arrayPregunta
-   
+    
 }
+let activador;
 function adivinarPregunta (result, arr){
     btn1.addEventListener("click", () => { 
-        if(arr[0] ==  result[0].correctAnswer){
-            alert("Adivinaste")
+        activador = true
+        if(arr[0] == result[0].correctAnswer && activador){
+            btn1.style.background = "green"
+            swal("Crack!","Tu respuesta es correcta!", "success")
             sumarPuntos(jugadores[0])
-            console.log(jugadores)
+            console.log(jugadores) 
+            consultarApi()
+            activador = false
         }else{
-            alert("Incorrecto")
+            btn1.style.background = "red"
+            swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
         }
+
     })
     btn2.addEventListener("click", () => { 
-        if(arr[1] ==  result[0].correctAnswer){
-            alert("Adivinaste")
+        activador = true
+        if(arr[1] ==  result[0].correctAnswer && activador){
+            btn2.style.background = "green"
+            swal("Crack!","Tu respuesta es correcta!", "success")
             sumarPuntos(jugadores[0])
             console.log(jugadores)
+            consultarApi()
+            activador = false
         }else{
-            alert("Incorrecto")
+            btn2.style.background = "red"
+            swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
         }
     })
     btn3.addEventListener("click", () => { 
-        if(arr[2] ==  result[0].correctAnswer){
-            alert("Adivinaste")
+        activador = true
+        if(arr[2] ==  result[0].correctAnswer && activador){
+            btn3.style.background = "green"
+            swal("Crack!","Tu respuesta es correcta!", "success")
             sumarPuntos(jugadores[0])
             console.log(jugadores)
+            consultarApi()
+            activador = false
         }else{
-            alert("Incorrecto")
+            btn3.style.background = "red"
+            swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
         }
     })
 }
+
 consultarApi()
+
 verificarStorageJugadores()
