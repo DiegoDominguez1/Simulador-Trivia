@@ -40,34 +40,40 @@ form.addEventListener("submit", function(e){
     form.reset()
 })
 
+let mensajeTurno = document.getElementById("mensajeTurno")    
+function jugadorturno(turno){
+    const elemento = document.createElement("div")
+    elemento.innerHTML = `<h2>El turno es de ${jugadores[turno].nombre}</h2>`;
+    mensajeTurno.appendChild(elemento) 
+    sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
+}
+
 let btn_finalizar = document.getElementById("btn-finalizar")
     btn_finalizar.addEventListener("click", () => {
     elegirJugadores.style.display = "none"
     cargarPreguntas.style.display = "flex"
-    let mensajeTurno = document.getElementById("mensajeTurno")
-    const elemento = document.createElement("div")
-    elemento.innerHTML = `<h2>El turno es de ${jugadores[0].nombre}</h2>`;
-    mensajeTurno.appendChild(elemento) 
-    sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
+    jugadorturno(0)
 })
-
 
 let pregunta = document.getElementById("pregunta")
 let btn1 = document.getElementById("btn1")
 let btn2 = document.getElementById("btn2")
 let btn3 = document.getElementById("btn3")
 
+let resultado;
+let posicion = 0;
 function consultarApi(){
     fetch("https://the-trivia-api.com/api/questions")
         .then(response => response.json())
         .then(result => {
-            console.log(result[0])
-            arrayBotones = agregarPregunta(result)
+            console.log(result)
+            arrayBotones = agregarPregunta(result,posicion)
             console.log(arrayBotones)
-            adivinarPregunta (result, arrayBotones)})
+            resultado = result 
+            })
         .catch(error => console.log(error))
     }
-    
+
     //ALGORITMO FISHER-YATES
     function shuffle(arr) {
         var i,
@@ -82,72 +88,64 @@ function consultarApi(){
         return arr;    
     };
     
-    function sumarPuntos(lista){
-        sumar = lista.puntos++;
-        return sumar;
-    }    
+function sumarPuntos(lista){
+    sumar = lista.puntos++;
+    return sumar;
+}    
     
-    function agregarPregunta(result){
-        let arrayPregunta = [
-            result[0].incorrectAnswers[0],
-            result[0].incorrectAnswers[1],
-            result[0].correctAnswer
-        ]
+function agregarPregunta(result, posicion){
+    let arrayPregunta = [
+        result[posicion].incorrectAnswers[0],
+        result[posicion].incorrectAnswers[1],
+        result[posicion].correctAnswer
+    ]
     shuffle(arrayPregunta)
-    pregunta.innerText = result[0].question
+    pregunta.innerText = result[posicion].question
     btn1.innerText = arrayPregunta[0]
     btn2.innerText = arrayPregunta[1]
     btn3.innerText = arrayPregunta[2]
     return arrayPregunta
-    
 }
-let activador;
-function adivinarPregunta (result, arr){
-    btn1.addEventListener("click", () => { 
-        activador = true
-        if(arr[0] == result[0].correctAnswer && activador){
-            btn1.style.background = "green"
-            swal("Crack!","Tu respuesta es correcta!", "success")
-            sumarPuntos(jugadores[0])
-            console.log(jugadores) 
-            consultarApi()
-            activador = false
-        }else{
-            btn1.style.background = "red"
-            swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
-        }
 
+let respuesta;
+function logicaBtn(nroBtn,turno){
+    if(arrayBotones[nroBtn] === resultado[posicion].correctAnswer){
+        swal("Crack!","Tu respuesta es correcta!", "success")
+        posicion++
+        arrayBotones = agregarPregunta(resultado,posicion)
+        console.log(arrayBotones) 
+        sumarPuntos(jugadores[turno])
+        respuesta = true 
+    }else{
+        swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
+        respuesta = false
+    }
+}
+
+function pintar(btn){
+respuesta?btn.style.background = "green":btn.style.background = "red"
+}
+function reiniciar(btn){
+    setTimeout(() => {
+        btn.style.background = "white"
+    }, 1000);
+}
+    btn1.addEventListener("click", () => { 
+        logicaBtn(0,0)
+        pintar(btn1)
+        reiniciar(btn1)
     })
     btn2.addEventListener("click", () => { 
-        activador = true
-        if(arr[1] ==  result[0].correctAnswer && activador){
-            btn2.style.background = "green"
-            swal("Crack!","Tu respuesta es correcta!", "success")
-            sumarPuntos(jugadores[0])
-            console.log(jugadores)
-            consultarApi()
-            activador = false
-        }else{
-            btn2.style.background = "red"
-            swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
-        }
+        logicaBtn(1,0)
+        pintar(btn2)
+        reiniciar(btn2)
     })
     btn3.addEventListener("click", () => { 
-        activador = true
-        if(arr[2] ==  result[0].correctAnswer && activador){
-            btn3.style.background = "green"
-            swal("Crack!","Tu respuesta es correcta!", "success")
-            sumarPuntos(jugadores[0])
-            console.log(jugadores)
-            consultarApi()
-            activador = false
-        }else{
-            btn3.style.background = "red"
-            swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
-        }
+        logicaBtn(2,0)
+        pintar(btn3)
+        reiniciar(btn3)
     })
-}
-
+// sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
 consultarApi()
-
 verificarStorageJugadores()
+
