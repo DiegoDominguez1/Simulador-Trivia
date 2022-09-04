@@ -3,12 +3,12 @@ body{
     margin: 0;
     box-sizing: border-box;
     background-color: black; 
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 p{
     margin: 0;
     margin: 0%;
 }
-
 
 #intro{
     display: flex;
@@ -17,19 +17,70 @@ p{
 }
 
 #intro img{
-    width: 50%;
+    width: 40%;
 }
 
 #btn-empezar{
     color: white;
     background-color:rgb(56, 56, 56);
-    padding: 5px 50px;
-    font-size: 50px;
+    padding: 10px 50px;
+    font-size: 40px;
+    border-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(255, 251, 251, 0.8);
+}
+#btn-finalizar{
+    text-align: center;
+    color: white;
+    background-color:rgb(56, 56, 56);
+    margin-top: 60px;
+    padding: 10px 40px;
+    font-size: 20px;
+    border-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(255, 251, 251, 0.8);
+}
+#input{
+    
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(255, 251, 251, 0.8);
+    padding: 10px;
+}
+.enviar{
+    color: white;
+    padding: 11px 15px;
+    background-color:rgb(56, 56, 56);
+    font-size: 20px;
+    border-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(255, 251, 251, 0.8);
+}
+#exit{
+    display: none;
+    margin-top: 300px;
+    align-items: center;
+    justify-content: center;
+}
+
+#btn-terminar{
+    display: flex;
+    align-items:center;
+    color: white;
+    padding: 11px 15px;
+    background-color:rgb(56, 56, 56);
+    font-size: 20px;
     border-color: white;
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(255, 251, 251, 0.8);
 }
 
+#ingreso{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+    margin-bottom: 20px;
+}
 #elegirJugadores{
     display: none;
     flex-direction: column;
@@ -37,26 +88,21 @@ p{
 }
 
 #nombresJugadores{
-    padding-top: 50px;
+    padding-top: 40px;
 }
 
 h2{
     color: aliceblue;
-}
-
-
-#ingreso{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 30px;
 }
 
 #jugadorBox{
     color: white;
+    font-size: 30px;
     background-color: rgb(93, 93, 176);
     border-radius: 10%;
     padding: 10px 20px;
-    margin-top: 20px;
+    margin-top:10px;
 }
 #cargarPreguntas{
     display: none;
@@ -74,7 +120,8 @@ h2{
     margin-top: 20px;
     font-size: 45px;
     border-color: white;
-    width: 50%;
+    width: 60%;
+    box-shadow: 0 0 20px rgba(255, 251, 251, 0.8);
 }
 .btnRespuesta:hover{
     transition: ease 0.3s;
@@ -88,16 +135,25 @@ h2{
     color: white;
     background-color: rgb(93, 93, 176);
     border-radius: 5%;
-    margin-top: 20px;
+    margin-top: 40px;
     font-size: 40px;
     border-color: white;
-    width: 80%;
+    width: 90%;
+    box-shadow: 0 0 10px rgba(255, 251, 251, 0.8);
 }
-
 
 #trivia{
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#tabla{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    margin-top: 20px;
+    font-size: 45px;
 }

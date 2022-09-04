@@ -1,8 +1,12 @@
 let btn_empezar = document.getElementById("btn-empezar")
 let sectionIntro = document.getElementById("sectionIntro")
 let sectionElegirJugadores = document.getElementById("elegirJugadores")
+let tabla = document.getElementById("tabla")
+let exit = document.getElementById("exit")
+let volverAjugar = document.getElementById("volverAjugar")
 
 btn_empezar.addEventListener("click", () => {
+    tabla.style.display = "none"
     sectionIntro.style.display = "none"
     sectionElegirJugadores.style.display = "flex"
 })
@@ -36,13 +40,14 @@ form.addEventListener("submit", function(e){
     divJugador.innerHTML = `<div id="jugadorBox"><p>${nombreJugador}</p></div>`
     nombresJugadores.appendChild(divJugador)
     jugadores.push(jugador)
-   
+    console.log(jugadores)
     form.reset()
 })
 
 let mensajeTurno = document.getElementById("mensajeTurno")    
 function jugadorturno(turnoJ){
     const elemento = document.createElement("div")
+    elemento.setAttribute("id", "cartel")
     elemento.innerHTML = `<h2>El turno es de ${jugadores[turnoJ].nombre}</h2>`
     mensajeTurno.appendChild(elemento) 
     sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
@@ -108,70 +113,97 @@ function agregarPregunta(result, posicion){
 }
 
 let respuesta
+let salir = false
 let posicion = 0
 let cantidadPreguntas = 0
 function logicaBtn(nroBtn,turno){
     if(arrayBotones[nroBtn] === resultado[posicion].correctAnswer){
+        respuesta = true
+        posicion++
+        cantidadPreguntas++ 
         swal("Crack!","Tu respuesta es correcta!", "success")
-        posicion++
         sumarPuntos(jugadores[turno])
-        cantidadPreguntas++
-        if(cantidadPreguntas == 3){
-            siguienteJugador()
-        }else{
-            arrayBotones = agregarPregunta(resultado,posicion)
-            console.log(arrayBotones) 
-        }
-        respuesta = true 
+        siguienteJugador()
     }else{
-        swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
         posicion++
-        cantidadPreguntas++
-        if(cantidadPreguntas == 3){
-            siguienteJugador()
-        }else{
-            arrayBotones = agregarPregunta(resultado,posicion)
-            console.log(arrayBotones)
-        }
+        cantidadPreguntas++ 
+        swal("Mal ahí!", "Tu respuesta es incorrecta!", "error")
         respuesta = false
+        siguienteJugador() 
     }
 }   
+
 function siguienteJugador(){
-    swal("Tú turno terminó","Siguiente jugador", "info")
+    sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
+    if(cantidadPreguntas == 5){
         siguiente++
+        if(siguiente == jugadores.length){
+            cargarPreguntas.style.display = "none"
+            tabla.style.display = "flex"
+            exit.style.display = "flex"
+            tablaFinal()
+            exit.addEventListener("click", () => {
+                swal("Felicitaciones","Muchas Gracias a todos por jugar!!!", "success")
+                tabla.style.display = "none"
+                exit.style.display = "none"
+                sessionStorage.clear()
+            }) 
+        }else{
+        swal("Tu turno terminó","Siguiente jugador", "info")
         consultarApi()
         posicion = 0 
         cantidadPreguntas = 0
-        sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
+        const cartel = document.getElementById("cartel")
+        mensajeTurno.removeChild(cartel)
+        jugadorturno(siguiente)
+        }
+    }else{
+        arrayBotones = agregarPregunta(resultado,posicion)
+        console.log(arrayBotones)
+    } 
 }
+        
 function pintar(btn){
     respuesta?btn.style.background = "green":btn.style.background = "red"
 }
 
 function reiniciar(btn){
-    setTimeout(() => {
-        btn.style.background = "white"
-    }, 1000);
+    setTimeout(() => { btn.style.background = "white"}, 1000);
 }
 
-    btn1.addEventListener("click", () => { 
-        logicaBtn(0,siguiente)
-        pintar(btn1)
-        reiniciar(btn1)
+function tablaFinal(){
+    let tablaPuntaje = document.createElement("div")
+    tablaPuntaje.innerHTML = `<h2>Tabla de puntajes</h2>`
+    tabla.appendChild(tablaPuntaje)
+    
+    jugadores.forEach((el)=>{
+        if ( el.puntos == 1 ){
+            let elementosLista = document.createElement("div")
+            elementosLista.innerHTML = `<h2>${el.nombre} hizo ${el.puntos} punto.</h2>`
+            tabla.appendChild(elementosLista)
+        }else{
+            let elementosLista = document.createElement("div")
+            elementosLista.innerHTML = `<h2>${el.nombre} hizo ${el.puntos} puntos.</h2>`
+            tabla.appendChild(elementosLista)
+        }
     })
-    btn2.addEventListener("click", () => { 
-        logicaBtn(1,siguiente)
-        pintar(btn2)
-        reiniciar(btn2)
-    })
-    btn3.addEventListener("click", () => { 
-        logicaBtn(2,siguiente)
-        pintar(btn3)
-        reiniciar(btn3)
-    })
+}
 
-
-// sessionStorage.setItem('jugadores', JSON.stringify(jugadores))
 consultarApi()
 verificarStorageJugadores()
 
+btn1.addEventListener("click", () => { 
+    logicaBtn(0,siguiente)
+    pintar(btn1)
+    reiniciar(btn1)
+})
+btn2.addEventListener("click", () => { 
+    logicaBtn(1,siguiente)
+    pintar(btn2)
+    reiniciar(btn2)
+})
+btn3.addEventListener("click", () => { 
+    logicaBtn(2,siguiente)
+    pintar(btn3)
+    reiniciar(btn3)
+})
